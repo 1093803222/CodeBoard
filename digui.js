@@ -31,15 +31,15 @@ class Tree {
     return node
   }
 
-  dfs() {
-    this.dfsWrapper(this.root)
+  inOrder() {
+    this.inOrderWrapper(this.root)
   }
   // 先序遍历
-  dfsWrapper(node) {
+  inOrderWrapper(node) {
     if (!node) return
+    this.inOrderWrapper(node.l)
     console.log(node.value)
-    this.dfsWrapper(node.l)
-    this.dfsWrapper(node.r)
+    this.inOrderWrapper(node.r)
   }
 
   getDeepth() {
@@ -52,6 +52,23 @@ class Tree {
     LD = this.getDeepthWrpper(node.l)
     LR = this.getDeepthWrpper(node.r)
     return (LD > LR ? LD : LR) + 1
+  }
+
+  getNextNode(targetNodeValue) {
+    let pre = null
+    let nextNodeValue = null
+    const dfs = node => {
+      if (!node) return
+      dfs(node.l)
+      // 判断是否等于
+      if (pre && pre.value === targetNodeValue && node)
+        nextNodeValue = node.value
+      pre = node
+      dfs(node.r)
+    }
+    dfs(this.root)
+
+    return nextNodeValue
   }
 }
 
@@ -87,11 +104,19 @@ const data = {
   }
 }
 
+// test
 let tree = new Tree()
 tree.createTree(data)
 
 console.log(`中序遍历`)
-tree.dfs()
+tree.inOrder()
 
-console.log(`得到树高的遍历过程`)
-console.log(`树的高度：${tree.getDeepth()}`)
+function test(value) {
+  console.log(`the ${value}'s next node is ${tree.getNextNode(value)}`)
+}
+
+test(3)
+test(1)
+test(4)
+test(2)
+test(6)
